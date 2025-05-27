@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Nomad Salary Predictor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin-top: 50px;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+        .card-header {
+            background-color: #6c63ff;
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 20px;
+            text-align: center;
+        }
+        .btn-predict {
+            background-color: #6c63ff;
+            border: none;
+            padding: 10px 25px;
+            font-weight: 600;
+        }
+        .btn-predict:hover {
+            background-color: #5a52d6;
+        }
+        .result-container {
+            display: none;
+            margin-top: 30px;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .feature-icon {
+            color: #6c63ff;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Digital Nomad Salary Predictor</h2>
+                <p class="mb-0">Estimate your potential salary as a location-independent worker</p>
+            </div>
+            <div class="card-body">
+                <form id="salaryForm">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="job_role" class="form-label">Job Role</label>
+                            <input type="text" class="form-control" id="job_role" required placeholder="e.g., Data Scientist, Web Developer">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="location" class="form-label">Location (City, Country)</label>
+                            <input type="text" class="form-control" id="location" required placeholder="e.g., Lisbon, Portugal">
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="productivity" class="form-label">Productivity (1-10)</label>
+                            <input type="number" class="form-control" id="productivity" min="1" max="10" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="burnout_level" class="form-label">Burnout Level (1-10)</label>
+                            <input type="number" class="form-control" id="burnout_level" min="1" max="10" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Options</label>
+                            <div class="d-flex">
+                                <div class="form-check me-3">
+                                    <input class="form-check-input" type="checkbox" id="company_remote">
+                                    <label class="form-check-label" for="company_remote">Remote Company</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="nomad_visa">
+                                    <label class="form-check-label" for="nomad_visa">Nomad Visa</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-predict btn-lg text-white">Predict Salary</button>
+                    </div>
+                </form>
+                
+                <div id="resultContainer" class="result-container text-center">
+                    <h4 class="mb-4">Predicted Salary</h4>
+                    <div class="display-4 text-primary mb-4" id="predictedSalary">$0</div>
+                    
+                    <div class="card mt-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Input Features</h5>
+                        </div>
+                        <div class="card-body text-start">
+                            <ul class="list-group list-group-flush" id="featureList">
+                                <!-- Features will be added here by JavaScript -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('salaryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const job_role = document.getElementById('job_role').value;
+            const location = document.getElementById('location').value;
+            const productivity = document.getElementById('productivity').value;
+            const burnout_level = document.getElementById('burnout_level').value;
+            const company_remote = document.getElementById('company_remote').checked ? 'Y' : 'N';
+            const nomad_visa = document.getElementById('nomad_visa').checked ? 'Y' : 'N';
+            
+            // Create payload
+            const payload = {
+                job_role,
+                company_remote,
+                location,
+                nomad_visa,
+                productivity,
+                burnout_level
+            };
+            
+            // Send to backend
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    return;
+                }
+                
+                // Display results
+                document.getElementById('predictedSalary').textContent = 
+                    '$' + data.predicted_salary_usd.toLocaleString();
+                
+                // Display features
+                const featureList = document.getElementById('featureList');
+                featureList.innerHTML = '';
+                
+                for (const [key, value] of Object.entries(data.input_features)) {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item d-flex align-items-center';
+                    li.innerHTML = `
+                        <span class="feature-icon">→</span>
+                        <strong>${key.replace('_', ' ')}:</strong> &nbsp;${value}
+                    `;
+                    featureList.appendChild(li);
+                }
+                
+                // Show result container
+                document.getElementById('resultContainer').style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        });
+    </script>
+</body>
+</html>
