@@ -32,7 +32,7 @@
             align-items:center;
             justify-content:center;
             overflow:hidden;
-            background-image: url('/mnt/data/3d03025d-55f6-43f3-89bb-b0984396ff6e.png');
+            background-image: url('background.avif');
             background-size: cover;
             background-position: center;
         }
@@ -43,7 +43,7 @@
             position:absolute;
             inset:0;
             background: linear-gradient(180deg, rgba(255,255,255,0.82) 10%, rgba(255,255,255,0.95) 75%);
-            backdrop-filter: blur(6px) saturate(1.05);
+            backdrop-filter: blur(0px) saturate(1.05);
             pointer-events:none;
         }
         .hero-inner{
@@ -51,15 +51,16 @@
             max-width:1100px;
             width:100%;
             padding: 56px 28px;
-            display:grid;
-            grid-template-columns: 1fr 420px;
-            gap:32px;
+            display:flex;
+            flex-direction:column;
             align-items:center;
+            justify-content:center;
+            text-align:center;
         }
 
         /* ---------- Left hero text ---------- */
         .hero-title{
-            text-align:left;
+            text-align:center;
             font-family: Georgia, "Times New Roman", Times, serif;
         }
         .hero-title h1{
@@ -89,8 +90,29 @@
             width:48px;
             height:2px;
             background:linear-gradient(90deg, transparent, #ccc, transparent);
-            margin:18px 0;
+            margin:18px auto;
         }
+
+        /* Predict Now Button */
+        .btn-predict-now{
+            background: linear-gradient(180deg,var(--accent), var(--accent-dark));
+            border:none;
+            border-radius: 12px;
+            padding:16px 40px;
+            font-weight:700;
+            letter-spacing:0.6px;
+            font-size:1.2rem;
+            box-shadow: 0 10px 24px rgba(108,99,255,0.25);
+            color:white;
+            cursor:pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top:24px;
+        }
+        .btn-predict-now:hover{
+            transform: translateY(-2px);
+            box-shadow: 0 14px 28px rgba(108,99,255,0.3);
+        }
+        .btn-predict-now:active{ transform: translateY(1px); }
 
         /* ---------- Right card (form) ---------- */
         .glass-card{
@@ -99,6 +121,12 @@
             box-shadow: 0 20px 40px rgba(12,12,20,0.08);
             padding:22px;
             border: 1px solid rgba(18,18,30,0.04);
+            display:none;
+            max-width:900px;
+            margin:32px auto 0;
+        }
+        .glass-card.show{
+            display:block;
         }
         .glass-card .card-title{
             font-size:1.1rem;
@@ -166,7 +194,6 @@
         /* small responsive adjustments */
         @media (max-width: 980px){
             .hero-inner{
-                grid-template-columns: 1fr;
                 padding: 36px 16px;
             }
             .hero{
@@ -176,6 +203,19 @@
             .result-section{
                 margin-top: 20px;
             }
+        }
+
+        /* Footer */
+        .footer{
+            background:#222;
+            color:#fff;
+            text-align:center;
+            padding:24px 16px;
+            margin-top:48px;
+        }
+        .footer p{
+            margin:4px 0;
+            font-size:0.9rem;
         }
 
         /* list group feature item styling */
@@ -202,62 +242,62 @@
     <!-- HERO -->
     <header class="hero" role="banner" aria-label="hero">
         <div class="hero-inner">
-            <!-- Left content -->
+            <!-- Center content -->
             <div class="hero-title">
-                <h1>Luxe Nomad Salary Insights</h1>
+                <h1>Digital Nomad Salary Insights</h1>
                 <p class="lead">for entrepreneurs and location-independent professionals</p>
 
                 <div class="decor-rule" aria-hidden="true"></div>
 
                 <p class="hero-subnote">Estimate your potential earnings across roles, productivity and lifestyle choices — simple, quick, and practical.</p>
+                
+                <button class="btn-predict-now" id="showFormBtn">Predict Now</button>
             </div>
 
-            <!-- Right form (glass card) - we keep existing IDs and form structure unchanged -->
-            <div>
-                <div class="glass-card">
-                    <div class="card-title">Digital Nomad Salary Predictor</div>
-                    <div class="card-sub">Estimate your potential salary as a location-independent worker</div>
+            <!-- Form (glass card) - Initially hidden -->
+            <div class="glass-card" id="formCard">
+                <div class="card-title">Digital Nomad Salary Predictor</div>
+                <div class="card-sub">Estimate your potential salary as a location-independent worker</div>
 
-                    <form id="salaryForm" novalidate>
-                        <div class="row g-3">
-                            <div class="col-md-12">
-                                <label for="job_role" class="form-label">Job Role</label>
-                                <input type="text" class="form-control" id="job_role" required placeholder="e.g., Data Scientist, Web Developer">
-                            </div>
+                <form id="salaryForm" novalidate>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="job_role" class="form-label">Job Role</label>
+                            <input type="text" class="form-control" id="job_role" required placeholder="e.g., Data Scientist, Web Developer">
+                        </div>
 
-                            <div class="col-md-12">
-                                <label for="location" class="form-label">Location (City, Country)</label>
-                                <input type="text" class="form-control" id="location" required placeholder="e.g., Lisbon, Portugal">
-                            </div>
+                        <div class="col-md-6">
+                            <label for="location" class="form-label">Location (City, Country)</label>
+                            <input type="text" class="form-control" id="location" required placeholder="e.g., Lisbon, Portugal">
+                        </div>
 
-                            <div class="col-md-4">
-                                <label for="productivity" class="form-label">Productivity (1-10)</label>
-                                <input type="number" class="form-control" id="productivity" min="1" max="10" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="burnout_level" class="form-label">Burnout Level (1-10)</label>
-                                <input type="number" class="form-control" id="burnout_level" min="1" max="10" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label d-block">Options</label>
-                                <div class="d-flex align-items-center">
-                                    <div class="form-check me-3">
-                                        <input class="form-check-input" type="checkbox" id="company_remote">
-                                        <label class="form-check-label" for="company_remote">Remote Company</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="nomad_visa">
-                                        <label class="form-check-label" for="nomad_visa">Nomad Visa</label>
-                                    </div>
+                        <div class="col-md-4">
+                            <label for="productivity" class="form-label">Productivity (1-10)</label>
+                            <input type="number" class="form-control" id="productivity" min="1" max="10" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="burnout_level" class="form-label">Burnout Level (1-10)</label>
+                            <input type="number" class="form-control" id="burnout_level" min="1" max="10" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label d-block">Options</label>
+                            <div class="d-flex align-items-center">
+                                <div class="form-check me-3">
+                                    <input class="form-check-input" type="checkbox" id="company_remote">
+                                    <label class="form-check-label" for="company_remote">Remote</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="nomad_visa">
+                                    <label class="form-check-label" for="nomad_visa">Nomad Visa</label>
                                 </div>
                             </div>
-
-                            <div class="col-12 text-end mt-2">
-                                <button type="submit" class="btn btn-predict btn-lg text-white">Predict Salary</button>
-                            </div>
                         </div>
-                    </form>
-                </div>
+
+                        <div class="col-12 text-end mt-2">
+                            <button type="submit" class="btn btn-predict btn-lg text-white">Predict Salary</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </header>
@@ -291,6 +331,12 @@
 
     <!-- Keep your original JS logic intact; I only added small DOM hook to toggle display container (preserving all IDs and /predict call) -->
     <script>
+        // Show form when "Predict Now" button is clicked
+        document.getElementById('showFormBtn').addEventListener('click', function() {
+            document.getElementById('formCard').classList.add('show');
+            document.getElementById('formCard').scrollIntoView({behavior:'smooth', block:'center'});
+        });
+
         document.getElementById('salaryForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -356,5 +402,11 @@
             });
         });
     </script>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Copyright</p>
+        <p>Divyansh Manro</p>
+    </footer>
 </body>
 </html>
