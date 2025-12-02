@@ -5,7 +5,7 @@ Live App: https://co22327-digital-nomad-salary-predictor.onrender.com
 Predict salary based on job role, location, productivity, burnout levels, and remote-friendly lifestyle choices.
 
 This project uses a trained machine learning model to estimate a digital nomad’s expected annual salary in USD.
-It includes a **clean luxury-themed frontend (HTML + Bootstrap)** and a **Python Flask backend** that serves predictions through a REST API.
+It includes a **clean frontend (HTML + Bootstrap)** and a **Python Flask backend** that serves predictions through a REST API.
 
 The dataset, preprocessing scripts, and trained model (`joblib` file) are included for transparency and reproducibility.
 
@@ -59,7 +59,7 @@ digital-nomad-salary-predictor/
 │
 ├── templates/
 │   ├── index.html                  
-│   └── background.avif             
+│   └── background.jpg            
 │
 ├── app.py                          # Flask backend API
 ├── train_model.py                  # Script to train and export ML model
@@ -123,7 +123,7 @@ The UI includes:
 **Background used in hero:**
 https://share.google/images/zSnCftZceK0XBnhfA
 
-<img src="templates/background.avif" width="650"/>
+<img src="templates/background.jpg" width="650"/>
 
 ---
 
